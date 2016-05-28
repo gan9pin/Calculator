@@ -12,7 +12,10 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
 
     @IBOutlet weak var resultLabel: UILabel!
     @IBOutlet weak var numberCollectionView: UICollectionView!
+    @IBOutlet weak var scientificCollectionView: UICollectionView!
     let caluclatorElements:[String] = ["AC","+/-","%","÷","7","8","9","×","4","5","6","-","1","2","3","+","0",".","="]
+    let scientificElements:[String] = "( ) mc m+ m- mr 2nd x² x³ x^y e^x 10^x 1/x ²√x ³√x y√x ln log10 x! sin cos tan e EE Rad sinh cosh tanh π Rand".characters.split(" ").map{String($0)}
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -26,28 +29,51 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
         //NumberCellの設定
-        let numberCell:UICollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("NumberCell", forIndexPath: indexPath)
-        
-        let numberLabel:UILabel = numberCell.contentView.viewWithTag(1) as! UILabel
-        numberLabel.text = caluclatorElements[indexPath.row]
-        
-        return numberCell
+        if(collectionView.tag == 1){
+            let numberCell:UICollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("NumberCell", forIndexPath: indexPath)
+            
+            let numberLabel:UILabel = numberCell.contentView.viewWithTag(1) as! UILabel
+            numberLabel.text = caluclatorElements[indexPath.row]
+            
+            return numberCell
+        }
+        //ScientificCellの設定
+        else{
+            let scientificCell:UICollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("ScientificCell", forIndexPath: indexPath)
+            
+            let scientificLabel:UILabel = scientificCell.contentView.viewWithTag(1) as! UILabel
+            scientificLabel.text = scientificElements[indexPath.row]
+            
+            return scientificCell
+        }
     }
     
     // Screenサイズに応じたセルサイズを返す
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        // numberCollectionの設定
         var cellWidth:CGFloat
-        if(indexPath.row == 16){
-            cellWidth = collectionView.frame.size.width / 2 - 1
-        }else{
-            cellWidth = collectionView.frame.size.width / 4 - 1
+        let cellHeight:CGFloat
+            // 正方形で返すためにwidth,heightを同じにする
+        if(collectionView.tag == 1){
+            
+            if(indexPath.row == 16){//数字の0は幅が違うので0だけ別設定（indexpathが16）
+                cellWidth = collectionView.frame.size.width / 2 - 1
+            }else{
+                cellWidth = collectionView.frame.size.width / 4 - 1
+            }
+            let cellHeight:CGFloat = collectionView.frame.height / 5
+            
+            return CGSizeMake(cellWidth, cellHeight)
+        }// scientifiCollectionの設定
+        else{
+            cellWidth = collectionView.frame.size.width / 6 - 1
+            cellHeight = collectionView.frame.size.height / 5
+            return CGSizeMake(cellWidth, cellHeight)
         }
-        let cellHeight:CGFloat = collectionView.frame.height / 5
-        // 正方形で返すためにwidth,heightを同じにする
-        return CGSizeMake(cellWidth, cellHeight)
     }
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
@@ -55,9 +81,13 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // 要素数を入れる、要素以上の数字を入れると表示でエラーとなる
-        print(collectionView.tag)
-        return 19;
+        // numberCollectionの設定
+        if(collectionView.tag == 1){
+            return 19
+        }// scientifiCollectionの設定
+        else{
+            return 30
+        }
     }
 
 

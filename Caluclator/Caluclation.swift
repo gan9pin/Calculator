@@ -119,6 +119,7 @@ class Caluclation{
             
         default:
             
+            if(currentValue == ""){ currentValue = "0"}
             if(currentValue[currentValue.startIndex] == "-"){
                 currentValue.removeAtIndex(currentValue.startIndex)
             }

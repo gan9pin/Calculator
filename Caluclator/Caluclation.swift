@@ -13,9 +13,6 @@ class Caluclation{
     var memoryPlus:String = "" //メモリープラスを格納
     var momeryMinus:String = "" //メモリーマイナスを格納
     var results:String = "" //計算結果
-    static var previousValue:String = "0"
-    static var currentValue:String = "0"
-    static var lastOperator = "" //最後に押した四則演算子を保持する
     
     enum Action{
         case None
@@ -25,14 +22,42 @@ class Caluclation{
         case Equal
         case Other
     }
+    
     static var previousAction = Action.None
     
+    static var previousValue:String = "0" {
+        didSet{
+            previousValue = StringValueFormat(previousValue)
+            
+        }
+    }
+    static var currentValue:String = "0" {
+        didSet{
+            currentValue = StringValueFormat(currentValue)
+        }
+    }
+    static var lastOperator = "" //最後に押した四則演算子を保持する
+    
     //文字列の式を評価するメソッド
-    static func eval(stringformula:String) -> String{
-        let exp: NSExpression = NSExpression(format: stringformula)
-        let result: Double = exp.expressionValueWithObject(nil, context: nil) as! Double
+    static func eval(leftSide:String, strOperator:String, var rightSide: String) -> String{
         
-        return String(result)
+        //  左辺か右辺いずれかがDouble型でないと正しい結果が出ないため、右辺は確実にDouble型で計算する　例）1 / 9 = 0
+        if(rightSide.rangeOfString(".") == nil){
+            rightSide = rightSide + ".0"
+        }
+        var stringFormula = leftSide + strOperator + rightSide
+        stringFormula = stringFormula.stringByReplacingOccurrencesOfString(",", withString: "")
+        let exp: NSExpression = NSExpression(format: stringFormula)
+        var result: String = String(exp.expressionValueWithObject(nil, context: nil) as! Double)
+        if(result.rangeOfString(".") != nil){
+            let resultArray = result.characters.split(".").map{String($0)}
+            if(resultArray[1] == "0"){result = resultArray[0]}
+        }
+        else if(result == "inf" || result == "nan"){
+            result = "エラー"
+            clear()
+        }
+        return result
     }
     
     //番号を追加するメソッド
@@ -41,7 +66,7 @@ class Caluclation{
         print("addNumber")
         switch previousAction{
             
-        case Action.None, Action.Equal:
+        case Action.None, Action.Equal, Action.Other:
             lastOperator = ""
             currentValue = ""
             
@@ -53,7 +78,7 @@ class Caluclation{
             
         }
         previousAction = Action.Number
-        
+        if(currentValue == "0"){currentValue = ""}
         currentValue = currentValue + number
         
         return currentValue
@@ -61,6 +86,7 @@ class Caluclation{
     
     static func addPoint() -> String{
         print("addPoint")
+        if(currentValue.rangeOfString(".") != nil){ return currentValue }
         switch previousAction{
             
         case Action.Operator, Action.Equal, Action.None:
@@ -114,17 +140,17 @@ class Caluclation{
         
         switch previousAction{
             
-        case Action.None, Action.Equal:
+        case Action.None:
             previousValue = "0"
             lastOperator = strOperator
             
-        case Action.Operator:
+        case Action.Operator, Action.Equal:
             lastOperator = strOperator
             
         case Action.Number,Action.Other:
             //lastOperatorにすでに式が代入されている場合は前の式を先に評価する
             if(lastOperator != ""){
-                previousValue = eval(previousValue + lastOperator + currentValue)
+                previousValue = eval(previousValue, strOperator: lastOperator ,rightSide: currentValue)
             }
             //まだ演算子が入力されていない場合
             else{
@@ -146,15 +172,15 @@ class Caluclation{
         switch previousAction{
             
         case Action.Number, Action.Equal, Action.Other:
-            previousValue = eval(previousValue + lastOperator + currentValue)
+            previousValue = eval(previousValue, strOperator: lastOperator ,rightSide: currentValue)
             
         case Action.Point:
             currentValue.removeAtIndex(currentValue.endIndex)
-            previousValue = eval(previousValue + lastOperator + currentValue)
+            previousValue = eval(previousValue, strOperator: lastOperator ,rightSide: currentValue)
             
         case Action.Operator:
             currentValue = previousValue
-            previousValue = eval(previousValue + lastOperator + currentValue)
+            previousValue = eval(previousValue, strOperator: lastOperator ,rightSide: currentValue)
         default:
             break
 
@@ -164,25 +190,82 @@ class Caluclation{
         return previousValue
         
     }
+    
     static func persent() -> String{
-        if(previousAction == Action.Number){
-            currentValue = String(Double(currentValue)! / 100.0)
+        
+        switch previousAction{
+            
+        case Action.Number:
+            currentValue = eval(String(Double(currentValue)!), strOperator: "/", rightSide: "100")
+            previousAction = Action.Point
             return currentValue
-        }
-        else if(previousAction == Action.Equal){
-            previousValue = String(Double(previousValue)! / 100.0)
+            
+        case Action.Equal:
+            previousValue = eval(String(Double(previousValue)!), strOperator: "/", rightSide: "100")
+            previousAction = Action.Point
             return previousValue
-        }
-        else{
+            
+        case Action.Point:
+            currentValue = eval(String(Double(currentValue + "0")!), strOperator: "/", rightSide: "100")
+            previousAction = Action.Point
+            return currentValue
+            
+        default:
+            previousAction = Action.Other
             return "0"
         }
     }
+    
     static func clear() -> String{
         previousValue = "0"
         previousAction = Action.None
         lastOperator = ""
-        
+        currentValue = ""
         return previousValue
+    }
+    
+    static func StringValueFormat(var value:String) -> String{
+        
+        if(value == ""){return ""}
+        var integer:String = ""
+        var smallNumber:String = ""
+        var comma:String = ""
+        
+        value = value.stringByReplacingOccurrencesOfString(",", withString: "")
+        print(value)
+        if(value.rangeOfString(".") != nil && value.substringFromIndex(value.startIndex.advancedBy(value.characters.count - 1)) != "."){
+            let split = value.characters.split(".").map{String($0)}
+            print(split)
+            integer = split[0]
+            smallNumber = split[1]
+            comma = "."
+            
+        }
+        else if(value.substringFromIndex(value.startIndex.advancedBy(value.characters.count - 1)) == "."){
+            print(value)
+            value.removeAtIndex(value.startIndex.advancedBy(value.characters.count - 1))
+            integer = value
+            comma = "."
+            
+        }else{
+            integer = value
+        }
+        
+        let result:String?
+        if(integer.characters.count > 3){
+            
+            let formatter = NSNumberFormatter()
+            formatter.numberStyle = NSNumberFormatterStyle.DecimalStyle
+            formatter.groupingSeparator = ","
+            formatter.groupingSize = 3
+            
+            result = formatter.stringFromNumber(NSNumber(integer:Int(integer)!))
+        }
+        else{
+            result = integer
+        }
+        
+        return String(result!) + comma + smallNumber
     }
     
 }

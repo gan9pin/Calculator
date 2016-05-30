@@ -15,11 +15,12 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
     @IBOutlet weak var scientificCollectionView: UICollectionView!
     let caluclatorElements:[String] = ["AC","+/-","%","÷","7","8","9","×","4","5","6","-","1","2","3","+","0",".","="]
     let scientificElements:[String] = "( ) mc m+ m- mr 2nd x² x³ x^y e^x 10^x 1/x ²√x ³√x y√x ln log10 x! sin cos tan e EE Rad sinh cosh tanh π Rand".characters.split(" ").map{String($0)}
-    
+    let liteGrayGroup:[Int] = [3,7,11,15,18]
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         resultLabel.textColor = UIColor.whiteColor()
+        resultLabel.text = "0"
     }
 
     override func viewDidLayoutSubviews() {
@@ -34,11 +35,33 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
         
         //NumberCellの設定
         if(collectionView.tag == 1){
-            let numberCell:UICollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("NumberCell", forIndexPath: indexPath)
+            
+            let numberCell:UICollectionViewCell
+            
+            if(caluclatorElements[indexPath.row].isMatch("[+\\-×÷=]") && caluclatorElements[indexPath.row].characters.count == 1){
+                numberCell = collectionView.dequeueReusableCellWithReuseIdentifier("OperatorCell", forIndexPath: indexPath)
+            }
+            else if(caluclatorElements[indexPath.row].isMatch("[0-9\\.]")){
+                numberCell = collectionView.dequeueReusableCellWithReuseIdentifier("NumberCell", forIndexPath: indexPath)
+            }
+            else{
+                numberCell = collectionView.dequeueReusableCellWithReuseIdentifier("OtherCell", forIndexPath: indexPath)
+            }
             
             let numberLabel:UILabel = numberCell.contentView.viewWithTag(1) as! UILabel
+            numberCell.tag = indexPath.row
             numberLabel.text = caluclatorElements[indexPath.row]
-            
+//            if (collectionView.tag == 1){
+//
+//                if(liteGrayGroup.contains(indexPath.row)){
+//                    print(indexPath.row)
+//                    numberCell.backgroundColor = UIColor.whiteColor()
+//                }
+//                else if(caluclatorElements[indexPath.row].isMatch("[+\\-×÷=]") && caluclatorElements[indexPath.row].characters.count == 1){
+//                    numberCell.backgroundColor = UIColor.orangeColor()
+////                    numberLabel.textColor = UIColor.whiteColor()
+//                }
+//            }
             return numberCell
         }
         //ScientificCellの設定
@@ -50,6 +73,38 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
             
             return scientificCell
         }
+    }
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        
+        if (collectionView.tag == 1){
+            
+            if(caluclatorElements[indexPath.row].isMatch("[0-9]")){
+                resultLabel.text = Caluclation.addNumber(caluclatorElements[indexPath.row])
+            }
+            else if(caluclatorElements[indexPath.row].isMatch("\\.")){
+                resultLabel.text = Caluclation.addPoint()
+            }
+            else if(caluclatorElements[indexPath.row].isMatch("\\+\\/\\-")){
+                resultLabel.text = Caluclation.addSign()
+            }
+            else if(caluclatorElements[indexPath.row].isMatch("[+\\-×÷]{1}")){
+                resultLabel.text = Caluclation.addOperator(caluclatorElements[indexPath.row])
+            }
+            else if(caluclatorElements[indexPath.row].isMatch("=")){
+                resultLabel.text = Caluclation.equal()
+            }
+            else if(caluclatorElements[indexPath.row].isMatch("AC")){
+                resultLabel.text = Caluclation.clear()
+            }
+            else if(caluclatorElements[indexPath.row].isMatch("%")){
+                resultLabel.text = Caluclation.persent()
+            }
+        }
+        else{
+            print(scientificElements[indexPath.row])
+        }
+        
     }
     
     // Screenサイズに応じたセルサイズを返す

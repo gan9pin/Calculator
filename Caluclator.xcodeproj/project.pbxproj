@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E3C4A8D01CF974910078E920 /* String+isMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C4A8CF1CF974910078E920 /* String+isMatch.swift */; };
 		E3E7EFFA1CF7456E0030E831 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E7EFF91CF7456E0030E831 /* AppDelegate.swift */; };
 		E3E7EFFC1CF7456E0030E831 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E7EFFB1CF7456E0030E831 /* ViewController.swift */; };
 		E3E7EFFF1CF7456E0030E831 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E3E7EFFD1CF7456E0030E831 /* Main.storyboard */; };
@@ -14,6 +15,7 @@
 		E3E7F0041CF7456E0030E831 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E3E7F0021CF7456E0030E831 /* LaunchScreen.storyboard */; };
 		E3E7F00F1CF7456E0030E831 /* CaluclatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E7F00E1CF7456E0030E831 /* CaluclatorTests.swift */; };
 		E3E7F01A1CF7456E0030E831 /* CaluclatorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E7F0191CF7456E0030E831 /* CaluclatorUITests.swift */; };
+		E3E7F02A1CF957E10030E831 /* Caluclation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E7F0291CF957E10030E831 /* Caluclation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E3C4A8CF1CF974910078E920 /* String+isMatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+isMatch.swift"; sourceTree = "<group>"; };
 		E3E7EFF61CF7456E0030E831 /* Caluclator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Caluclator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3E7EFF91CF7456E0030E831 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E3E7EFFB1CF7456E0030E831 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -47,6 +50,7 @@
 		E3E7F0151CF7456E0030E831 /* CaluclatorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaluclatorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3E7F0191CF7456E0030E831 /* CaluclatorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaluclatorUITests.swift; sourceTree = "<group>"; };
 		E3E7F01B1CF7456E0030E831 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E3E7F0291CF957E10030E831 /* Caluclation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Caluclation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +78,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E3C4A8CE1CF974650078E920 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				E3C4A8CF1CF974910078E920 /* String+isMatch.swift */,
+			);
+			name = Extension;
+			sourceTree = "<group>";
+		};
 		E3E7EFED1CF7456E0030E831 = {
 			isa = PBXGroup;
 			children = (
@@ -97,8 +109,10 @@
 		E3E7EFF81CF7456E0030E831 /* Caluclator */ = {
 			isa = PBXGroup;
 			children = (
+				E3C4A8CE1CF974650078E920 /* Extension */,
 				E3E7EFF91CF7456E0030E831 /* AppDelegate.swift */,
 				E3E7EFFB1CF7456E0030E831 /* ViewController.swift */,
+				E3E7F0291CF957E10030E831 /* Caluclation.swift */,
 				E3E7EFFD1CF7456E0030E831 /* Main.storyboard */,
 				E3E7F0001CF7456E0030E831 /* Assets.xcassets */,
 				E3E7F0021CF7456E0030E831 /* LaunchScreen.storyboard */,
@@ -257,6 +271,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3E7EFFC1CF7456E0030E831 /* ViewController.swift in Sources */,
+				E3E7F02A1CF957E10030E831 /* Caluclation.swift in Sources */,
+				E3C4A8D01CF974910078E920 /* String+isMatch.swift in Sources */,
 				E3E7EFFA1CF7456E0030E831 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

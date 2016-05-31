@@ -51,7 +51,18 @@ class Caluclation{
         var stringFormula = leftSide + strOperator + rightSide
         stringFormula = stringFormula.stringByReplacingOccurrencesOfString(",", withString: "")
         let exp: NSExpression = NSExpression(format: stringFormula)
-        var result: String = String(exp.expressionValueWithObject(nil, context: nil) as! Double)
+        let resultDouble = exp.expressionValueWithObject(nil, context: nil) as! Double
+        
+        var result:String = String(resultDouble)
+        
+        //DoubleからStringに変換するときに指数表記されるのを回避
+        if(result.rangeOfString("e") != nil && result.rangeOfString("+") == nil){
+            var str:[String] = result.characters.split("-").map{String($0)} //指数を分割（7e-10 -> [7e,10])
+            if(Int(str[1]) < 15){
+                result = String(format:"%.\(str[1])f",resultDouble)
+            }
+        }
+        
         if(result.rangeOfString(".") != nil){
             let resultArray = result.characters.split(".").map{String($0)}
             if(resultArray[1] == "0"){result = resultArray[0]}
@@ -117,7 +128,6 @@ class Caluclation{
                 previousValue = "-" + previousValue
             }
             
-            previousAction = Action.Other
             return previousValue
             
         default:
@@ -201,19 +211,18 @@ class Caluclation{
         
         switch previousAction{
             
-        case Action.Number:
+        case Action.Number,Action.Other:
             currentValue = eval(String(Double(currentValue)!), strOperator: "/", rightSide: "100")
-            previousAction = Action.Point
+            previousAction = Action.Other
             return currentValue
             
         case Action.Equal:
             previousValue = eval(String(Double(previousValue)!), strOperator: "/", rightSide: "100")
-            previousAction = Action.Point
             return previousValue
             
         case Action.Point:
             currentValue = eval(String(Double(currentValue + "0")!), strOperator: "/", rightSide: "100")
-            previousAction = Action.Point
+            previousAction = Action.Other
             return currentValue
             
         default:
@@ -235,17 +244,17 @@ class Caluclation{
     static func commaFormatter(var value:String) -> String{
         
         if(value == ""){return ""}
+        if(value.rangeOfString("-") != nil){ return value}
         
         var integer:String = ""  //整数部分を格納する
         var smallNumber:String = ""  //小数点以下を格納する
         var comma:String = ""
         
         value = value.stringByReplacingOccurrencesOfString(",", withString: "")  //すでにカンマで区切られている場合は一旦取り除く
-        
         //小数点以下が存在する場合で、最後の値がカンマでない場合
         if(value.rangeOfString(".") != nil && value.substringFromIndex(value.startIndex.advancedBy(value.characters.count - 1)) != "."){
             let split = value.characters.split(".").map{String($0)}
-            
+            print(split)
             integer = split[0]
             smallNumber = split[1]
             comma = "."

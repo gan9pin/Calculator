@@ -10,10 +10,10 @@ import Foundation
 
 class Caluclation{
     
-    var memoryPlus:String = "" //メモリープラスを格納
-    var momeryMinus:String = "" //メモリーマイナスを格納
-    var results:String = "" //計算結果
+    static var memoryPlus:Double = 0 //メモリープラスを格納
+    static var memoryMinus:Double = 0 //メモリーマイナスを格納
     
+    //userが行ったアクションのステート
     enum Action{
         case None
         case Number
@@ -26,16 +26,19 @@ class Caluclation{
     static var previousAction = Action.None
     
     static var previousValue:String = "0" {
+        
+        //変数に代入されるたびにカンマ区切りでフォーマットする。
         didSet{
-            previousValue = StringValueFormat(previousValue)
+            previousValue = commaFormatter(previousValue)
             
         }
     }
     static var currentValue:String = "0" {
         didSet{
-            currentValue = StringValueFormat(currentValue)
+            currentValue = commaFormatter(currentValue)
         }
     }
+    
     static var lastOperator = "" //最後に押した四則演算子を保持する
     
     //文字列の式を評価するメソッド
@@ -164,10 +167,11 @@ class Caluclation{
         }
         
         previousAction = Action.Operator
-        
+
         return previousValue
     }
     
+    //イコールを押した時のメソッド
     static func equal() -> String{
         
         switch previousAction{
@@ -192,6 +196,7 @@ class Caluclation{
         
     }
     
+    //%を押した時のメソッド
     static func persent() -> String{
         
         switch previousAction{
@@ -217,6 +222,7 @@ class Caluclation{
         }
     }
     
+    //clearを押した時のメソッド
     static func clear() -> String{
         previousValue = "0"
         previousAction = Action.None
@@ -225,23 +231,27 @@ class Caluclation{
         return previousValue
     }
     
-    static func StringValueFormat(var value:String) -> String{
+    //文字列の数字を三桁ごとにカンマ区切りにする
+    static func commaFormatter(var value:String) -> String{
         
         if(value == ""){return ""}
-        var integer:String = ""
-        var smallNumber:String = ""
+        
+        var integer:String = ""  //整数部分を格納する
+        var smallNumber:String = ""  //小数点以下を格納する
         var comma:String = ""
         
-        value = value.stringByReplacingOccurrencesOfString(",", withString: "")
-        print(value)
+        value = value.stringByReplacingOccurrencesOfString(",", withString: "")  //すでにカンマで区切られている場合は一旦取り除く
+        
+        //小数点以下が存在する場合で、最後の値がカンマでない場合
         if(value.rangeOfString(".") != nil && value.substringFromIndex(value.startIndex.advancedBy(value.characters.count - 1)) != "."){
             let split = value.characters.split(".").map{String($0)}
-            print(split)
+            
             integer = split[0]
             smallNumber = split[1]
             comma = "."
             
         }
+        //最後の値がカンマの場合
         else if(value.substringFromIndex(value.startIndex.advancedBy(value.characters.count - 1)) == "."){
             print(value)
             value.removeAtIndex(value.startIndex.advancedBy(value.characters.count - 1))
@@ -267,6 +277,39 @@ class Caluclation{
         }
         
         return String(result!) + comma + smallNumber
+    }
+    
+    //関数電卓部分のメソッド
+    static func scientificFunction(key: String, var labelValue: String) -> String {
+        
+        labelValue = labelValue.stringByReplacingOccurrencesOfString(",", withString: "")
+        
+        switch key{
+            
+        case "mc":
+            memoryPlus = 0
+            memoryMinus = 0
+            clear()
+            previousAction = Action.Other
+            return commaFormatter(labelValue)
+        case "m+":
+            memoryPlus += Double(labelValue)!
+            previousAction = Action.Other
+            return commaFormatter(labelValue)
+        case "m-":
+            memoryMinus -= Double(labelValue)!
+            previousAction = Action.Other
+            return commaFormatter(labelValue)
+        case "mr":
+            clear()
+            previousAction = Action.Equal
+            previousValue = eval(String(memoryPlus), strOperator: "+",  rightSide: String(memoryMinus))
+            return previousValue
+            
+        default:
+            return labelValue
+            
+        }
     }
     
 }

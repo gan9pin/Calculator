@@ -51,17 +51,6 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
             let numberLabel:UILabel = numberCell.contentView.viewWithTag(1) as! UILabel
             numberCell.tag = indexPath.row
             numberLabel.text = caluclatorElements[indexPath.row]
-//            if (collectionView.tag == 1){
-//
-//                if(liteGrayGroup.contains(indexPath.row)){
-//                    print(indexPath.row)
-//                    numberCell.backgroundColor = UIColor.whiteColor()
-//                }
-//                else if(caluclatorElements[indexPath.row].isMatch("[+\\-×÷=]") && caluclatorElements[indexPath.row].characters.count == 1){
-//                    numberCell.backgroundColor = UIColor.orangeColor()
-////                    numberLabel.textColor = UIColor.whiteColor()
-//                }
-//            }
             return numberCell
         }
         //ScientificCellの設定
@@ -101,8 +90,8 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
                 resultLabel.text = Caluclation.persent()
             }
         }
-        else{
-            print(scientificElements[indexPath.row])
+        else if(collectionView.tag == 2){
+            resultLabel.text = Caluclation.scientificFunction(scientificElements[indexPath.row], labelValue: resultLabel.text!)
         }
         
     }

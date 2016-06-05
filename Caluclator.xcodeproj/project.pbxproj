@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E3C4A8D01CF974910078E920 /* String+isMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C4A8CF1CF974910078E920 /* String+isMatch.swift */; };
+		E3C4A8D21D0070440078E920 /* String+commaFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C4A8D11D0070430078E920 /* String+commaFormatter.swift */; };
 		E3E7EFFA1CF7456E0030E831 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E7EFF91CF7456E0030E831 /* AppDelegate.swift */; };
 		E3E7EFFC1CF7456E0030E831 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E7EFFB1CF7456E0030E831 /* ViewController.swift */; };
 		E3E7EFFF1CF7456E0030E831 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E3E7EFFD1CF7456E0030E831 /* Main.storyboard */; };
@@ -37,6 +38,7 @@
 
 /* Begin PBXFileReference section */
 		E3C4A8CF1CF974910078E920 /* String+isMatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+isMatch.swift"; sourceTree = "<group>"; };
+		E3C4A8D11D0070430078E920 /* String+commaFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+commaFormatter.swift"; sourceTree = "<group>"; };
 		E3E7EFF61CF7456E0030E831 /* Caluclator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Caluclator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3E7EFF91CF7456E0030E831 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E3E7EFFB1CF7456E0030E831 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				E3C4A8CF1CF974910078E920 /* String+isMatch.swift */,
+				E3C4A8D11D0070430078E920 /* String+commaFormatter.swift */,
 			);
 			name = Extension;
 			sourceTree = "<group>";
@@ -272,6 +275,7 @@
 			files = (
 				E3E7EFFC1CF7456E0030E831 /* ViewController.swift in Sources */,
 				E3E7F02A1CF957E10030E831 /* Caluclation.swift in Sources */,
+				E3C4A8D21D0070440078E920 /* String+commaFormatter.swift in Sources */,
 				E3C4A8D01CF974910078E920 /* String+isMatch.swift in Sources */,
 				E3E7EFFA1CF7456E0030E831 /* AppDelegate.swift in Sources */,
 			);

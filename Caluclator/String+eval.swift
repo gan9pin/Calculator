@@ -22,6 +22,6 @@ extension String{
         let resultDouble = exp.expressionValueWithObject(nil, context: nil) as! Double
         
         print("resultDouble",resultDouble)
-        return caluclationResultFormatter(resultDouble)
+        return calculationResultFormatter(resultDouble)
     }
 }

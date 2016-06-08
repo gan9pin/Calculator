@@ -13,12 +13,13 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
     @IBOutlet weak var resultLabel: UILabel!
     @IBOutlet weak var numberCollectionView: UICollectionView!
     @IBOutlet weak var scientificCollectionView: UICollectionView!
-    let mCaluclation:Caluclation = Caluclation()
+    let mCaluclation:Calculation = Calculation()
     let caluclatorElements:[String] = ["AC","+/-","%","÷","7","8","9","×","4","5","6","-","1","2","3","+","0",".","="]
     let scientificElements:[String] = "( ) mc m+ m- mr 2nd x² x³ x^y e^x 10^x 1/x ²√x ³√x y√x ln log10 x! sin cos tan e EE Rad sinh cosh tanh π Rand".characters.split(" ").map{String($0)}
     let liteGrayGroup:[Int] = [3,7,11,15,18]
     var operatorCells:Dictionary<String,UICollectionViewCell> = Dictionary<String, UICollectionViewCell>()
     var isFirst:Bool = true
+    var previousLabelText = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +41,26 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
         numberCollectionView.reloadData()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        // 現在のデバイスの向きを取得.
+        let deviceOrientation: UIDeviceOrientation!  = UIDevice.currentDevice().orientation
+        
+        var countNumber = previousLabelText.stringByReplacingOccurrencesOfString(",", withString: "")
+        countNumber = countNumber.stringByReplacingOccurrencesOfString(".", withString: "")
+        
+        if (UIDeviceOrientationIsPortrait(deviceOrientation)){
+            if (countNumber.characters.count > 9){
+                resultLabel.text = String.convertIndex(resultLabel.text!)
+            }
+        }
+        else{
+            if(countNumber.characters.count < 17){
+                resultLabel.text = previousLabelText
+            }
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -54,7 +75,6 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
             if(caluclatorElements[indexPath.row].isMatch("[+\\-×÷=]") && caluclatorElements[indexPath.row].characters.count == 1){
                 numberCell = collectionView.dequeueReusableCellWithReuseIdentifier("OperatorCell", forIndexPath: indexPath)
                 if(isFirst){
-                    print(indexPath.row ,caluclatorElements[indexPath.row])
                     operatorCells[caluclatorElements[indexPath.row]] = numberCell
                     numberCell.layer.borderColor = UIColor.blackColor().CGColor
                     numberCell.layer.borderWidth = 0
@@ -122,6 +142,7 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
             resultLabel.text = "エラー"
             mCaluclation.clear()
         }
+        previousLabelText = resultLabel.text!
         
     }
     

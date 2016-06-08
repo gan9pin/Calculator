@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  Caluclator
+//  Calculator
 //
 //  Created by YutoTani on 2016/05/28.
 //  Copyright © 2016年 YutoTani. All rights reserved.
@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class Caluclation{
+class Calculation{
     
     var memoryPlus:Double = 0 //メモリープラスを格納
     var memoryMinus:Double = 0 //メモリーマイナスを格納
@@ -262,10 +262,10 @@ class Caluclation{
             previousValue = String.eval(String(memoryPlus), operatorArg: "+",  rightSide: String(memoryMinus))
             return previousValue
         case "x²":
-            currentValue = String.caluclationResultFormatter(pow(Double(currentValue)!, 2.0))
+            currentValue = String.calculationResultFormatter(pow(Double(currentValue)!, 2.0))
             return currentValue
         case "x³":
-            currentValue = String.caluclationResultFormatter(pow(Double(currentValue)!, 3.0))
+            currentValue = String.calculationResultFormatter(pow(Double(currentValue)!, 3.0))
             return currentValue
             
             

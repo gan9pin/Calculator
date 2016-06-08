@@ -1,6 +1,6 @@
 //
-//  String+caluclationResultFormatter.swift
-//  Caluclator
+//  String+calclationResultFormatter.swift
+//  Calculator
 //
 //  Created by YutoTani on 2016/06/05.
 //  Copyright © 2016年 YutoTani. All rights reserved.
@@ -10,7 +10,7 @@ import Foundation
 
 extension String{
     
-    static func caluclationResultFormatter(value: Double) -> String{
+    static func calculationResultFormatter(value: Double) -> String{
  
         var result:String = String(value)
         

@@ -7,11 +7,12 @@
 //
 
 import Foundation
+import UIKit
 
 class Caluclation{
     
-    static var memoryPlus:Double = 0 //メモリープラスを格納
-    static var memoryMinus:Double = 0 //メモリーマイナスを格納
+    var memoryPlus:Double = 0 //メモリープラスを格納
+    var memoryMinus:Double = 0 //メモリーマイナスを格納
     
     //userが行ったアクションのステート
     enum Action{
@@ -23,9 +24,9 @@ class Caluclation{
         case Other
     }
     
-    static var previousAction = Action.None
+    var previousAction = Action.None
     
-    static var previousValue:String = "0" {
+    var previousValue:String = "0" {
         
         //変数に代入されるたびにカンマ区切りでフォーマットする。
         didSet{
@@ -33,49 +34,16 @@ class Caluclation{
             
         }
     }
-    static var currentValue:String = "0" {
+    var currentValue:String = "0" {
         didSet{
             currentValue = String.commaFormatter(currentValue)
         }
     }
     
-    static var lastOperator = "" //最後に押した四則演算子を保持する
-    
-    //文字列の式を評価するメソッド
-    static func eval(leftSide:String, strOperator:String, var rightSide: String) -> String{
-        
-        //  左辺か右辺いずれかがDouble型でないと正しい結果が出ないため、右辺は確実にDouble型で計算する　例）1 / 9 = 0
-        if(rightSide.rangeOfString(".") == nil){
-            rightSide = rightSide + ".0"
-        }
-        var stringFormula = leftSide + strOperator + rightSide
-        stringFormula = stringFormula.stringByReplacingOccurrencesOfString(",", withString: "")
-        let exp: NSExpression = NSExpression(format: stringFormula)
-        let resultDouble = exp.expressionValueWithObject(nil, context: nil) as! Double
-        
-        var result:String = String(resultDouble)
-        
-        //DoubleからStringに変換するときに指数表記されるのを回避
-        if(result.rangeOfString("e") != nil && result.rangeOfString("+") == nil){
-            var str:[String] = result.characters.split("-").map{String($0)} //指数を分割（7e-10 -> [7e,10])
-            if(Int(str[1]) < 15){
-                result = String(format:"%.\(str[1])f",resultDouble)
-            }
-        }
-        
-        if(result.rangeOfString(".") != nil){
-            let resultArray = result.characters.split(".").map{String($0)}
-            if(resultArray[1] == "0"){result = resultArray[0]}
-        }
-        else if(result == "inf" || result == "nan"){
-            result = "エラー"
-            clear()
-        }
-        return result
-    }
+    var lastOperator = "" //最後に押した四則演算子を保持する
     
     //番号を追加するメソッド
-    static func addNumber(number:String) -> String{
+    func addNumber(number:String) -> String{
         
         print("addNumber")
         switch previousAction{
@@ -93,12 +61,37 @@ class Caluclation{
         }
         previousAction = Action.Number
         if(currentValue == "0"){currentValue = ""}
-        currentValue = currentValue + number
         
-        return currentValue
+        // 現在のデバイスの向きを取得.
+        let deviceOrientation: UIDeviceOrientation!  = UIDevice.currentDevice().orientation
+        
+        var countNumber = currentValue.stringByReplacingOccurrencesOfString(",", withString: "")
+        countNumber = countNumber.stringByReplacingOccurrencesOfString(".", withString: "")
+        // 横向き
+        if (UIDeviceOrientationIsLandscape(deviceOrientation)){
+            if (countNumber.characters.count < 16){
+                currentValue = currentValue + number
+                return currentValue
+            }
+            else{
+                return currentValue
+            }
+            
+        }
+        // 縦向き
+        else{
+            if (countNumber.characters.count < 9){
+                currentValue = currentValue + number
+                return currentValue
+            }
+            else{
+                return currentValue
+            }
+        }
     }
     
-    static func addPoint() -> String{
+    func addPoint() -> String{
+        
         print("addPoint")
         if(currentValue.rangeOfString(".") != nil){ return currentValue }
         switch previousAction{
@@ -115,7 +108,7 @@ class Caluclation{
     }
     
     //符号を追加・削除
-    static func addSign() -> String{
+    func addSign() -> String{
         
         switch previousAction{
             
@@ -133,6 +126,7 @@ class Caluclation{
         default:
             
             if(currentValue == ""){ currentValue = "0"}
+            
             if(currentValue[currentValue.startIndex] == "-"){
                 currentValue.removeAtIndex(currentValue.startIndex)
             }
@@ -146,7 +140,7 @@ class Caluclation{
     }
     
     //四則演算子を式に追加する
-    static func addOperator(var strOperator:String) -> String{
+    func addOperator(var strOperator:String) -> String{
         print("addOperator")
         if(strOperator == "×"){strOperator = "*"}
         if(strOperator == "÷"){strOperator = "/"}
@@ -164,7 +158,7 @@ class Caluclation{
         case Action.Number,Action.Other:
             //lastOperatorにすでに式が代入されている場合は前の式を先に評価する
             if(lastOperator != ""){
-                previousValue = eval(previousValue, strOperator: lastOperator ,rightSide: currentValue)
+                previousValue = String.eval(previousValue,operatorArg: lastOperator, rightSide: currentValue)
             }
             //まだ演算子が入力されていない場合
             else{
@@ -182,20 +176,20 @@ class Caluclation{
     }
     
     //イコールを押した時のメソッド
-    static func equal() -> String{
+    func equal() -> String{
         
         switch previousAction{
             
         case Action.Number, Action.Equal, Action.Other:
-            previousValue = eval(previousValue, strOperator: lastOperator ,rightSide: currentValue)
+            previousValue = String.eval(previousValue, operatorArg: lastOperator ,rightSide: currentValue)
             
         case Action.Point:
-            currentValue.removeAtIndex(currentValue.endIndex)
-            previousValue = eval(previousValue, strOperator: lastOperator ,rightSide: currentValue)
+            currentValue.removeAtIndex(currentValue.startIndex.advancedBy(currentValue.characters.count - 1))
+            previousValue = String.eval(previousValue, operatorArg: lastOperator ,rightSide: currentValue)
             
         case Action.Operator:
             currentValue = previousValue
-            previousValue = eval(previousValue, strOperator: lastOperator ,rightSide: currentValue)
+            previousValue = String.eval(previousValue, operatorArg: lastOperator ,rightSide: currentValue)
         default:
             break
 
@@ -207,21 +201,23 @@ class Caluclation{
     }
     
     //%を押した時のメソッド
-    static func persent() -> String{
+    func persent() -> String{
+        
+        currentValue = currentValue.stringByReplacingOccurrencesOfString(",", withString: "")
         
         switch previousAction{
             
         case Action.Number,Action.Other:
-            currentValue = eval(String(Double(currentValue)!), strOperator: "/", rightSide: "100")
+            currentValue = String.eval(currentValue, operatorArg: "/", rightSide: "100")
             previousAction = Action.Other
             return currentValue
             
         case Action.Equal:
-            previousValue = eval(String(Double(previousValue)!), strOperator: "/", rightSide: "100")
+            previousValue = String.eval(previousValue, operatorArg: "/", rightSide: "100")
             return previousValue
             
         case Action.Point:
-            currentValue = eval(String(Double(currentValue + "0")!), strOperator: "/", rightSide: "100")
+            currentValue = String.eval(currentValue + "0", operatorArg: "/", rightSide: "100")
             previousAction = Action.Other
             return currentValue
             
@@ -232,7 +228,7 @@ class Caluclation{
     }
     
     //clearを押した時のメソッド
-    static func clear() -> String{
+    func clear() -> String{
         previousValue = "0"
         previousAction = Action.None
         lastOperator = ""
@@ -240,7 +236,7 @@ class Caluclation{
         return previousValue
     }
         //関数電卓部分のメソッド
-    static func scientificFunction(key: String, var labelValue: String) -> String {
+    func scientificFunction(key: String, var labelValue: String) -> String {
         
         labelValue = labelValue.stringByReplacingOccurrencesOfString(",", withString: "")
         
@@ -263,8 +259,15 @@ class Caluclation{
         case "mr":
             clear()
             previousAction = Action.Equal
-            previousValue = eval(String(memoryPlus), strOperator: "+",  rightSide: String(memoryMinus))
+            previousValue = String.eval(String(memoryPlus), operatorArg: "+",  rightSide: String(memoryMinus))
             return previousValue
+        case "x²":
+            currentValue = String.caluclationResultFormatter(pow(Double(currentValue)!, 2.0))
+            return currentValue
+        case "x³":
+            currentValue = String.caluclationResultFormatter(pow(Double(currentValue)!, 3.0))
+            return currentValue
+            
             
         default:
             return labelValue
